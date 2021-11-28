@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WS 聊天室</title>
+</head>
+
+<body>
+    <div>
+        <h1>WS 聊天室</h1>
+        <input type="text" name="" id="sendTxt" />
+        <button id="sendBtn">发送</button>
+    </div>
+    <script>
+        const ws = new WebSocket("ws://localhost:3000/");
+        function showMessage(txt, type) {
+            let p = document.createElement('p');
+            p.innerHTML = txt;
+            if (type == "enter") {
+                p.style.color = "blue";
+            } else if (type == "leave"){
+                p.style.color = "red";
+            }
+            document.body.appendChild(p);
+        };
+        ws.onopen = () => {
+            console.log("WS 连接!!");
+            document.getElementById("sendBtn").onclick = () => {
+                let txt = document.getElementById('sendTxt').value;
+                txt && ws.send(txt);
+            }
+        }
+        ws.onclose = () => {
+            console.log("WS 已关闭!!");
+        }
+        ws.onmessage = (e) => {
+            console.log('接收消息 :>> ', e);
+            const { type, data } = JSON.parse(e.data);
+            showMessage(data, type);
+        }
+    </script>
+</body>
+
+</html>
