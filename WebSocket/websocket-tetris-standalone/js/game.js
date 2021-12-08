@@ -44,6 +44,76 @@ const Game = function () {
             }
         }
     }
+    // 检测点是否合法
+    var check = function (pos, x, y) {
+        if (pos.x + x < 0) {
+            return false;
+        } else if (pos.x + x >= gameData.length) {
+            return false;
+        } else if (pos.y + y < 0) {
+            return false;
+        } else if (pos.y + y >= gameData[0].length) {
+            return false;
+        } else if (gameData[pos.x + x][pos.y + y] == 1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    // 检测数据是否合法
+    var isValid = function (pos, data) {
+        for (let i = 0; i < data.length; i++) {
+            for (let j = 0; j < data[0].length; j++) {
+                if (data[i][j] != 0) {
+                    if (!check(pos, i, j)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    // 清除数据
+    var clearData = function () {
+        for (let i = 0; i < cur.data.length; i++) {
+            for (let j = 0; j < cur.data[i].length; j++) {
+                if (check(cur.origin, i, j)) {
+                    gameData[cur.origin.x + i][cur.origin.y + j] = 0;
+                }
+            }
+        }
+    }
+    // 设置数据
+    var setData = function () {
+        for (let i = 0; i < cur.data.length; i++) {
+            for (let j = 0; j < cur.data[i].length; j++) {
+                if (check(cur.origin, i, j)) {
+                    gameData[cur.origin.x + i][cur.origin.y + j] = cur.data[i][j];
+                }
+            }
+        }
+    }
+    // 下移
+    var down = function () {
+        if(cur.canDown(isValid)) {
+            clearData();
+            cur.down();
+            setData();
+            refreshDiv(gameData, gameDivs);
+        }
+    }
+    // var up = function () {
+
+    // }
+    // var left = function () {
+
+    // }
+    // var right = function () {
+
+    // }
+    // var space = function () {
+
+    // }
     var init = function (doms) {
         gameDiv = doms.gameDiv;
         nextDiv = doms.nextDiv;
@@ -51,15 +121,12 @@ const Game = function () {
         next = new Square();
         initDiv(gameDiv, gameData, gameDivs);
         initDiv(nextDiv, next.data, nextDivs);
-        cur.origin.x = 10;
+        cur.origin.x = 0;
         cur.origin.y = 6;
-        for (let i = 0; i < cur.data.length; i++) {
-            for (let j = 0; j < cur.data[i].length; j++) {
-                gameData[cur.origin.x + i][cur.origin.y + j] = cur.data[i][j];
-            }
-        }
+        setData();
         refreshDiv(gameData, gameDivs);
         refreshDiv(next.data, nextDivs);
     };
     this.init = init;
+    this.down = down;
 }
