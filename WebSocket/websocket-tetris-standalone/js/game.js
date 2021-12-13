@@ -95,25 +95,47 @@ const Game = function () {
     }
     // 下移
     var down = function () {
-        if(cur.canDown(isValid)) {
+        if (cur.canDown(isValid)) {
             clearData();
             cur.down();
             setData();
             refreshDiv(gameData, gameDivs);
+            return true; // 还能下降
+        }
+        return false; // 不能下降了
+    }
+    var up = function () {
+        if (cur.canUp(isValid)) {
+            clearData();
+            cur.up();
+            setData();
+            refreshDiv(gameData, gameDivs);
         }
     }
-    // var up = function () {
-
-    // }
-    // var left = function () {
-
-    // }
-    // var right = function () {
-
-    // }
-    // var space = function () {
-
-    // }
+    var left = function () {
+        if (cur.canLeft(isValid)) {
+            clearData();
+            cur.left();
+            setData();
+            refreshDiv(gameData, gameDivs);
+        }
+    }
+    var right = function () {
+        if (cur.canRight(isValid)) {
+            clearData();
+            cur.right();
+            setData();
+            refreshDiv(gameData, gameDivs);
+        }
+    }
+    var rotate = function () {
+        if (cur.canRotate(isValid)) {
+            clearData();
+            cur.rotate();
+            setData();
+            refreshDiv(gameData, gameDivs);
+        }
+    }
     var init = function (doms) {
         gameDiv = doms.gameDiv;
         nextDiv = doms.nextDiv;
@@ -129,4 +151,9 @@ const Game = function () {
     };
     this.init = init;
     this.down = down;
+    this.up = up;
+    this.left = left;
+    this.right = right;
+    this.rotate = rotate;
+    this.fall = function () { while (down()); };
 }

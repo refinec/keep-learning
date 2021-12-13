@@ -4,15 +4,16 @@ const Local = function () {
     // 绑定键盘事件 
     var bindKeyEvent = function () {
         document.onkeydown = function (e) {
-            switch (e.key) {
+            switch (e.code) {
                 case "Space": // space-32
-                    game.space();
+                    game.fall();
                     break;
                 case "ArrowLeft": // left-37
                     game.left();
                     break;
                 case "ArrowUp": // up-38
-                    game.up();
+                    // game.up();
+                    game.rotate();
                     break;
                 case "ArrowRight": // right-39
                     game.right();
