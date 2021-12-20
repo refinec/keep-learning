@@ -139,12 +139,11 @@ const Game = function () {
     var init = function (doms) {
         gameDiv = doms.gameDiv;
         nextDiv = doms.nextDiv;
-        cur = new Square();
-        next = new Square();
+        const squareFactory = new SquareFactory();
+        cur = squareFactory.make(2, 2);
+        next = squareFactory.make(3, 3);
         initDiv(gameDiv, gameData, gameDivs);
         initDiv(nextDiv, next.data, nextDivs);
-        cur.origin.x = 0;
-        cur.origin.y = 6;
         setData();
         refreshDiv(gameData, gameDivs);
         refreshDiv(next.data, nextDivs);
