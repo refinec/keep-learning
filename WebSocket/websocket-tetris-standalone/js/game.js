@@ -136,6 +136,60 @@ const Game = function () {
             refreshDiv(gameData, gameDivs);
         }
     }
+    // 方块移动到底部，固定
+    var fixed = function () {
+        for (let i = 0; i < cur.data.length; i++) {
+            for (let j = 0; j < cur.data[i].length; j++) {
+                if (check(cur.origin, i, j)) {
+                    if (gameData[cur.origin.x + i][cur.origin.y + j] == 2) {
+                        gameData[cur.origin.x + i][cur.origin.y + j] = 1;
+                    }
+                }
+            }
+        }
+        refreshDiv(gameData, gameDivs);
+    }
+    // 消行
+    var checkClear = function () {
+        for (let i = gameData.length - 1; i >= 0; i--) {
+            let clear = true;
+            for (let j = 0; j < gameData[0].length; j++) {
+                if (gameData[i][j] != 1) {
+                    clear = false;
+                    break;
+                }
+            }
+            if (clear) {
+                for (let m = i; m > 0; m--) {
+                    for (let n = 0; n < gameData[0].length; n++) {
+                        gameData[m][n] = gameData[m - 1][n];
+                    }
+                }
+                for (let n = 0; n < gameData[0].length; n++) {
+                    gameData[0][n] = 0;
+                }
+                i++;
+            }
+        }
+    }
+    // 检查游戏结束
+    var checkGameOver = function () {
+        let gameOver = false;
+        for (let i = 0; i < gameData[0].length; i++) {
+            if (gameData[1][i] == 1) {
+                gameOver = true;
+            }
+        }
+        return gameOver;
+    }
+    // 下一个方块
+    var performNext = function (type, dir) {
+        cur = next;
+        setData();
+        next = SquareFactory.prototype.make(type, dir);
+        refreshDiv(gameData, gameDivs);
+        refreshDiv(next.data, nextDivs);
+    }
     var init = function (doms) {
         gameDiv = doms.gameDiv;
         nextDiv = doms.nextDiv;
@@ -154,5 +208,11 @@ const Game = function () {
     this.left = left;
     this.right = right;
     this.rotate = rotate;
-    this.fall = function () { while (down()); };
+    this.fixed = fixed;
+    this.performNext = performNext;
+    this.checkClear = checkClear;
+    this.checkGameOver = checkGameOver;
+    this.fall = function () {
+        while (down());
+    };
 }
