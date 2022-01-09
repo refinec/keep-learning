@@ -49,6 +49,18 @@ const Local = function () {
             }
         }
     }
+    // 生成干扰行
+    var generateBottomLine = function (lineNum) { 
+        let lines = [];
+        for (let i = 0; i < lineNum; i++) {
+            let line = [];
+            for (let j = 0; j < 10; j++) {
+                line.push(Math.ceil(Math.random() * 2) - 1)                
+            }
+            lines.push(line);
+        }
+        return lines;
+     }
     // 记时函数
     var timeFunc = function() {
         timeCount++;

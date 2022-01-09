@@ -16,6 +16,17 @@ const Game = function () {
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ];
     var cur; // 当前方块
@@ -228,6 +239,19 @@ const Game = function () {
     var gameover = function (win) {
         resultDiv.innerHTML = win ? "你赢了！" : "你输了!";
     }
+    // 底部增加行
+    var addTailLines = function (lines) {
+        for (let i = 0; i < gameData.length - lines.length; i++) {
+            gameData[i] = gameData[i + lines.length];
+        }
+        for (let j = 0; j < lines.length; j++) {
+            gameData[gameData.length - lines.length + j] = lines[j]            
+        }
+        cur.origin.x = cur.origin.x - lines.length;
+        if (cur.origin.x < 0) {
+            cur.origin.x = 0
+        }
+    }
     var init = function (doms, type, dir) {
         gameDiv = doms.gameDiv;
         nextDiv = doms.nextDiv;
@@ -253,6 +277,7 @@ const Game = function () {
     this.setTime = setTime;
     this.addScore = addScore;
     this.gameover = gameover;
+    this.addTailLines = addTailLines;
     this.fall = function () {
         while (down());
     };
