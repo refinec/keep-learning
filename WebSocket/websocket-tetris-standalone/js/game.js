@@ -1,6 +1,11 @@
 const Game = function () {
     let gameDiv;
     let nextDiv;
+    let timeDiv;
+    let scoreDiv;
+    let resultDiv;
+    // 分数
+    let score = 0;
     var gameData = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -151,6 +156,7 @@ const Game = function () {
     }
     // 消行
     var checkClear = function () {
+        var line = 0;
         for (let i = gameData.length - 1; i >= 0; i--) {
             let clear = true;
             for (let j = 0; j < gameData[0].length; j++) {
@@ -160,6 +166,7 @@ const Game = function () {
                 }
             }
             if (clear) {
+                line++;
                 for (let m = i; m > 0; m--) {
                     for (let n = 0; n < gameData[0].length; n++) {
                         gameData[m][n] = gameData[m - 1][n];
@@ -171,6 +178,7 @@ const Game = function () {
                 i++;
             }
         }
+        return line;
     }
     // 检查游戏结束
     var checkGameOver = function () {
@@ -190,16 +198,46 @@ const Game = function () {
         refreshDiv(gameData, gameDivs);
         refreshDiv(next.data, nextDivs);
     }
-    var init = function (doms) {
+    // 设置时间
+    var setTime = function (time) {
+        timeDiv.innerHTML = time;
+    }
+    // 分数
+    var addScore = function (line) {
+        let s = 0;
+        switch (line) {
+            case 1:
+                s = 10;
+                break;
+            case 2:
+                s = 30;
+                break;
+            case 3:
+                s = 60;
+                break;
+            case 4:
+                s = 100;
+                break;
+            default:
+                break;
+        }
+        score = score + s;
+        scoreDiv.innerHTML = score;
+    }
+    // 游戏结束
+    var gameover = function (win) {
+        resultDiv.innerHTML = win ? "你赢了！" : "你输了!";
+    }
+    var init = function (doms, type, dir) {
         gameDiv = doms.gameDiv;
         nextDiv = doms.nextDiv;
+        timeDiv = doms.timeDiv;
+        scoreDiv = doms.scoreDiv;
+        resultDiv = doms.resultDiv;
         const squareFactory = new SquareFactory();
-        cur = squareFactory.make(2, 2);
-        next = squareFactory.make(3, 3);
+        next = squareFactory.make(type, dir);
         initDiv(gameDiv, gameData, gameDivs);
         initDiv(nextDiv, next.data, nextDivs);
-        setData();
-        refreshDiv(gameData, gameDivs);
         refreshDiv(next.data, nextDivs);
     };
     this.init = init;
@@ -212,6 +250,9 @@ const Game = function () {
     this.performNext = performNext;
     this.checkClear = checkClear;
     this.checkGameOver = checkGameOver;
+    this.setTime = setTime;
+    this.addScore = addScore;
+    this.gameover = gameover;
     this.fall = function () {
         while (down());
     };
