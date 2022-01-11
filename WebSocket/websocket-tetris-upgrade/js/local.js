@@ -1,4 +1,4 @@
-const Local = function () {
+const Local = function (socket) {
     // 游戏对象
     var game;
     // 时间间隔

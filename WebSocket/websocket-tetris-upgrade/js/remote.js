@@ -1,4 +1,4 @@
-const Remote = function () {
+const Remote = function (socket) {
     let game; // 游戏对象
     let bindEvents = function () {
         document.getElementById("left").onclick = function () {

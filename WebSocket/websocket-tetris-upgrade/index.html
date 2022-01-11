@@ -11,6 +11,7 @@
 
 <body>
     <div>请用方向键和空格键进行操作：上->旋转，左->左移，右->右移, 下->下移,空格-> 坠落</div>
+    <div id="waiting"></div>
     <div class="square" id="local">
         <div class="title">我的游戏区</div>
         <!-- 游戏区 -->
@@ -49,6 +50,7 @@
             <button id="fall">fall</button>
         </div>
     </div>
+    <script src="socket.io-4.4.0.js"></script>
     <script src="js/square.js"></script>
     <script src="js/squareFactory.js"></script>
     <script src="js/game.js"></script>
