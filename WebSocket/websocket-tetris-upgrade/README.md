@@ -1,2 +1,2 @@
 # websocket-tetris-upgrade
-websocket 俄罗斯方块升级版
+websocket 俄罗斯方块联机版(使用websocket联机操作)
