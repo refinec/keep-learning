@@ -88,9 +88,15 @@ const Local = function (socket) {
             resultDiv: document.getElementById("local_gameover"),
         };
         game = new Game();
-        game.init(doms, generateType(), generateDir());
+        let type = generateType();
+        let dir = generateDir();
+        game.init(doms, type, dir);
+        socket.emit("init", {type, dir})
         bindKeyEvent();
-        game.performNext(generateType(), generateDir())
+        let next_type = generateType();
+        let next_dir = generateDir();
+        game.performNext(next_type, next_dir);
+        socket.emit("next", { type: next_type, dir: next_dir });
         timer = setInterval(move, INTERVAL);
     };
     // 结束
@@ -101,5 +107,8 @@ const Local = function (socket) {
         }
         document.onkeydown = null;
     }
-    this.start = start;
+    socket.on("start", function () { 
+        document.getElementById("waiting").innerHTML = "";
+        start();
+     })
 }
