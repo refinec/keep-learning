@@ -7,6 +7,38 @@ const Remote = function (socket) {
         socket.on("next", function ({ type, dir }) {
             game.performNext(type, dir);
         })
+
+        socket.on("fall", function () {
+            game.fall();
+        })
+        socket.on("left", function () {
+            game.left();
+        })
+        socket.on("rotate", function () {
+            game.rotate();
+        })
+        socket.on("right", function () {
+            game.right();
+        })
+        socket.on("down", function () {
+            game.down();
+        })
+        socket.on("fixed", function () {
+            game.fixed();
+        })
+        socket.on("line", function (data) {
+            game.checkClear();
+            game.addScore(data)
+        })
+        socket.on("time", function (time) {
+            game.setTime(time);
+        })
+        socket.on("lose", function () {
+            game.gameover(false);
+        })
+        socket.on("addTailLines", function () {
+            game.addTailLines(data);
+        })
     }
     let start = function (type, dir) {
         var doms = {

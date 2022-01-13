@@ -2,7 +2,7 @@ const Local = function (socket) {
     // 游戏对象
     var game;
     // 时间间隔
-    var INTERVAL = 200;
+    var INTERVAL = 2000;
     // 定时器
     var timer = null;
     // 时间计数器
@@ -15,19 +15,24 @@ const Local = function (socket) {
             switch (e.code) {
                 case "Space": // space-32
                     game.fall();
+                    socket.emit("fall");
                     break;
                 case "ArrowLeft": // left-37
                     game.left();
+                    socket.emit("left");
                     break;
                 case "ArrowUp": // up-38
                     // game.up();
                     game.rotate();
+                    socket.emit("rotate");
                     break;
                 case "ArrowRight": // right-39
                     game.right();
+                    socket.emit("right");
                     break;
                 case "ArrowDown": // down-40
                     game.down();
+                    socket.emit("down");
                     break;
             }
         }
@@ -37,16 +42,29 @@ const Local = function (socket) {
         timeFunc();
         if (!game.down()) {
             game.fixed();
+            socket.emit("fixed");
             let line = game.checkClear();
             if (line) {
                 game.addScore(line);
+                socket.emit("line", line);
+                if (line > 1) {
+                    let bottomLines = generateBottomLine(line);
+                    socket.emit("bottomLines", bottomLines);
+                }
             }
             if (game.checkGameOver()) {
                 game.gameover(false);
+                document.getElementById("remote_gameover").innerHTML = "你赢了！";
+                socket.emit("lose")
                 stop();
             } else {
-                game.performNext(generateType(), generateDir());
+                let next_type = generateType();
+                let next_dir = generateDir();
+                game.performNext(next_type, next_dir);
+                socket.emit("next", { type: next_type, dir: next_dir });
             }
+        } else {
+            socket.emit("down");
         }
     }
     // 生成干扰行
@@ -68,6 +86,7 @@ const Local = function (socket) {
             timeCount = 0;
             time++;
             game.setTime(time);
+            socket.emit("time", time);
         }
     }
     // 随机生成一个方块种类
@@ -110,5 +129,18 @@ const Local = function (socket) {
     socket.on("start", function () { 
         document.getElementById("waiting").innerHTML = "";
         start();
+    })
+    socket.on("lose", function () { 
+        game.gameover(true);
+        stop();
+    })
+    socket.on("leave", function () {
+        document.getElementById("local_gameover").innerHTML = "对方掉线";
+        document.getElementById("remote_gameover").innerHTML = "已掉线";
+        stop();
+    })
+    socket.on("bottomLines", function (data) { 
+        game.addTailLines(data);
+        socket.emit("addTailLines", data);
      })
 }
