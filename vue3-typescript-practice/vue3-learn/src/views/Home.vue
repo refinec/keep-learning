@@ -4,6 +4,19 @@
     <h1>{{count}}</h1>
     <h2>{{double}}</h2>
     <strong>X: {{position.x}}, Y: {{position.y}}</strong>
+    <button @click="openModal">Open Modal</button>
+    <div>捕获suspense中可能的错误：{{captureError}}</div>
+    <suspense>
+      <template #default>
+        <div>
+          <async-show></async-show>
+          <dog-show></dog-show>
+        </div>
+      </template>
+      <template #fallback>
+        <h2>请求加载中 loading...</h2>
+      </template>
+    </suspense>
     <fieldset>
       <legend>狗狗图片</legend>
       <div v-if="dogCeo.loading">loading...</div>
@@ -26,11 +39,15 @@
         style="object-fit: contain;"
       />
     </fieldset>
+    <modal :isOpen="modalIsOpen" @closeModal="closeModal" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, computed, toRefs, ComputedRef, onUpdated, onMounted, onUnmounted, onRenderTriggered, watch } from 'vue';
+import Modal from "@/components/Modal.vue"
+import AsyncShow from "@/components/AsyncShow.vue"
+import DogShow from '@/components/DogShow.vue'
+import { defineComponent, ref, reactive, computed, toRefs, ComputedRef, onUpdated, onMounted, onUnmounted, onRenderTriggered, watch, onErrorCaptured } from 'vue';
 import useMousePosition from "../hooks/useMousePosition";
 import useURLLoader from "../hooks/useURLLoader"
 interface IDataProps {
@@ -51,6 +68,11 @@ interface ICatResult {
 }
 export default defineComponent({
   name: 'Home',
+  components: {
+    Modal,
+    AsyncShow,
+    DogShow
+  },
   setup() {
     // const count = ref(0);
     // const double = computed(() => {
@@ -71,6 +93,7 @@ export default defineComponent({
         data.count++;
       },
     });
+    const refData = toRefs(data);
     let greeting = ref("");
     watch([greeting, data], (newV, oldV) => {
       console.log(newV, oldV);
@@ -78,6 +101,8 @@ export default defineComponent({
     watch([greeting, () => data.count], (newV, oldV) => {
       console.log(newV, oldV);
     })
+
+
     onMounted(() => {
       console.log("Component is mounted!");
     })
@@ -90,8 +115,9 @@ export default defineComponent({
     onRenderTriggered((event) => {
       console.log('onRenderTriggered 调试用的钩子', event)
     })
-    const refData = toRefs(data);
+
     const position = useMousePosition();
+
     const dogCeo = useURLLoader<IDogResult>("https://dog.ceo/api/breeds/image/random");
     const catCeo = useURLLoader<ICatResult[]>("https://api.thecatapi.com/v1/images/search");
     watch(dogCeo, () => {
@@ -99,11 +125,30 @@ export default defineComponent({
         console.log(dogCeo.result.message)
       }
     })
+
+    const modalIsOpen = ref(false);
+    function openModal() {
+      modalIsOpen.value = true;
+    }
+    function closeModal() {
+      modalIsOpen.value = false;
+    }
+
+    const captureError = ref(null);
+    onErrorCaptured((e: any) => { // 捕获suspense中可能的错误
+      captureError.value = e;
+      return true; // 返回一个布尔值，表示是否继续向上传播
+    })
+
     return {
       ...refData,
       position,
       dogCeo,
-      catCeo
+      catCeo,
+      modalIsOpen,
+      openModal,
+      closeModal,
+      captureError
     }
   }
 });

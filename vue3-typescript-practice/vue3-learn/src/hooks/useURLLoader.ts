@@ -1,4 +1,4 @@
-import { reactive } from "vue";
+import { reactive, UnwrapRef } from "vue";
 import axios from "axios";
 interface IResult<T> {
     result: T | null,
@@ -6,7 +6,13 @@ interface IResult<T> {
     loaded: boolean,
     error: string | null
 }
-function useURLLoader<T>(url: string) {
+interface IR<T> {
+    result: UnwrapRef<T> | null;
+    loading: boolean;
+    loaded: boolean;
+    error: string | null;
+}
+function useURLLoader<T>(url: string): IR<T> {
     const handleResult = reactive<IResult<T>>({
         result: null,
         loading: true,
