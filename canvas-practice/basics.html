@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas 基础</title>
+</head>
+
+<body>
+    <canvas id="canvas" style="display: block;margin: 0 auto;border: 1px solid #aaa;">
+        您的浏览器不支持canvas
+    </canvas>
+    <input type="range" id="scale-range" min="0.5" max="3.0" step="0.01" value="1" style="margin: 20px auto;display: block;width: 800px;">
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const scaleRange = document.getElementById('scale-range');
+        const image = new Image();
+
+        window.onload = function () {
+            /*
+             * 
+             canvas.width = 1152;
+             canvas.height = 768;
+             ctx.fillStyle = 'gray';
+             ctx.fillRect(100, 100, 400, 400);
+            */
+
+            canvas.width = 1152;
+            canvas.height = 768;
+            let scale = scaleRange.value;
+
+            image.src = "./assets/test.jpeg";
+            image.onload = function () { // 必须在图片加载完成后执行，否则图片未加载完，canvas就会显示空白
+                // 1. 第一种：ctx.drawImage(image, dx, dy);
+                // ctx.drawImage(image, 200, 200)
+
+                // 2. 第二种：ctx.drawImage(image, dx, dy, dWidth, dHeight);
+                // ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+                // 2. 第三种：ctx.drawImage(image, sx /*源图片开始X轴位置*/, sy /*源图片开始Y轴位置*/, sw /*要截取的源图片宽度*/, sh /*要截取的源图片高度*/,
+                // dx /*canvas开始绘制的X轴位置*/, dy /*canvas开始绘制的Y轴位置*/, dw /*canvas要绘制的宽度*/,
+                // dh /*canvas要绘制的高度*/);
+                // ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
+
+                drawImageByScale(canvas.width, canvas.height, scale);
+                scaleRange.oninput = function () {
+                    drawImageByScale(canvas.width, canvas.height, scaleRange.value);
+                }
+            }
+        }
+
+        function drawImageByScale(canvasWidth = 0, canvasHeight = 0, scale = 1) { 
+            let imageWidth = canvasWidth * scale;
+            let imageHeight = canvasHeight * scale;
+
+            // 只处理了放大
+            // let sx = imageWidth / 2 - canvasWidth / 2;
+            // let sy = imageHeight / 2 - canvasHeight / 2;
+            // ctx.drawImage(image, sx, sy, canvasWidth, canvasHeight, 0, 0, canvasWidth, canvasHeight);
+
+            // 处理放大和缩小
+            let dx = canvasWidth / 2 - imageWidth / 2;
+            let dy = canvasHeight / 2 - imageHeight / 2;
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            ctx.drawImage(image, dx, dy, imageWidth, imageHeight);
+        }
+    </script>
+</body>
+
+</html>
