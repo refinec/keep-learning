@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>离屏canvas</title>
+</head>
+
+<body>
+    <canvas id="canvas" style="display: block;margin: 0 auto;border: 1px solid #aaa;">
+        您的浏览器不支持canvas
+    </canvas>
+    <canvas id="watermark-canvas" style="display: none;margin: 0 auto;border: 1px solid #aaa;"></canvas>
+    <canvas id="enlarge-canvas" style="display: none;"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const watermarkCanvas = document.getElementById('watermark-canvas');
+        const watermarkCtx = watermarkCanvas.getContext('2d');
+        const enlargeCanvas = document.getElementById('enlarge-canvas');
+        const enlargeCtx = enlargeCanvas.getContext('2d');
+        const image = new Image();
+        let isMouseDown = false,
+            scale = 1;
+        window.onload = function () {
+            canvas.width = 1152;
+            canvas.height = 768;
+            image.src = "./assets/test.jpeg";
+            image.onload = function () {
+                // 把enlargeCanvas的宽高设置为原图的宽高,才能起到放大效果
+                enlargeCanvas.width = image.width;
+                enlargeCanvas.height = image.height;
+                scale = enlargeCanvas.width / canvas.width;
+
+                drawImageByScale(canvas.width, canvas.height, 1);
+                enlargeCtx.drawImage(image, 0, 0);
+            }
+
+
+            // 绘制水印
+            watermarkCanvas.width = 600;
+            watermarkCanvas.height = 100;
+            watermarkCtx.font = 'bold 50px sans-serif';
+            watermarkCtx.fillStyle = "rgba(255,255,255,0.5)";
+            watermarkCtx.textBaseline = 'middle';
+            watermarkCtx.fillText('水印', 460, 60);
+        }
+
+        function drawImageByScale(canvasWidth = 0, canvasHeight = 0, scale = 1) {
+            let imageWidth = canvasWidth * scale;
+            let imageHeight = canvasHeight * scale;
+            // 处理放大和缩小
+            let dx = canvasWidth / 2 - imageWidth / 2;
+            let dy = canvasHeight / 2 - imageHeight / 2;
+
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            ctx.drawImage(image, dx, dy, imageWidth, imageHeight);
+            ctx.drawImage(watermarkCanvas, canvasWidth - watermarkCanvas.width, canvasHeight - watermarkCanvas
+                .height); // 设置在右下角
+        }
+
+        function windowToCanvas(x, y) {
+            const bbox = canvas.getBoundingClientRect();
+            return {
+                x: x - bbox.left,
+                y: y - bbox.top
+            };
+        }
+
+        canvas.onmousedown = function (e) {
+            e.preventDefault();
+            isMouseDown = true;
+            const point = windowToCanvas(e.clientX, e.clientY);
+            drawCanvasWithMagnifier(true, point);
+
+            console.log(point.x, point.y)
+        }
+        canvas.onmouseup = function (e) {
+            e.preventDefault();
+            isMouseDown = false;
+            drawCanvasWithMagnifier(false);
+        }
+        canvas.onmouseout = function (e) {
+            e.preventDefault();
+            isMouseDown = false;
+            drawCanvasWithMagnifier(false);
+        }
+        canvas.onmousemove = function (e) {
+            e.preventDefault();
+            if (isMouseDown) {
+                const point = windowToCanvas(e.clientX, e.clientY);
+                console.log(point.x, point.y)
+                drawCanvasWithMagnifier(true, point);
+            }
+        }
+
+        function drawCanvasWithMagnifier(isShowMagnifier, point) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+            if (isShowMagnifier) {
+                drawMagnifier(point);
+            }
+        }
+
+        function drawMagnifier(point) {
+            const imageLG_cx = point.x * scale;
+            const imageLG_cy = point.y * scale;
+            const mr = 200;
+            const sx = imageLG_cx - mr;
+            const sy = imageLG_cy - mr;
+
+            const dx = point.x - mr;
+            const dy = point.y - mr;
+
+            ctx.save();
+
+            ctx.lineWidth = 10;
+            ctx.strokeStyle = "#069";
+
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, mr, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.clip();
+            ctx.drawImage(enlargeCanvas, sx, sy, 2 * mr, 2 * mr, dx, dy, 2 * mr, 2 * mr);
+            ctx.restore();
+        }
+    </script>
+</body>
+
+</html>
