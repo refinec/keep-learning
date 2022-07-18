@@ -67,7 +67,7 @@ def download_today_history_k_data(session=None):
         # last_date = "2022-07-05"
         row = list(row)
         bs.login()
-        for r in row:  # row[row.index(('600606.SH', '600606')):]
+        for r in row:  # row[row.index(('603797.SH', '603797')):]
             print(f"下载股票{last_date}的行情==>", r)
             bs_last_history_k_data(num_name=r[1], stock=compiler.findall(r[0])[0].lower() + "." + r[1],
                                    last_date=last_date)
