@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            background: red;
+        }
+        #fires {
+            height: 100vh;
+            width: 100vw;
+        }
+        #play {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
+        #share {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+        }
+        #share .arrow {
+            width: 150px;
+            height: 150px;
+            background: url("./static/page3_arrow.png");
+            background-size: cover;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            transform: rotate(60deg);
+        }
+        #share .rocket {
+            width: 60px;
+            height: 131px;
+            background: url("./static/page3_rocket.png");
+            background-size: cover;
+            margin-top: 100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #share p {
+            margin-top: 20px;
+            text-align: center;
+            line-height: 30px;
+            font-size: 20px;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="fires">
+        <canvas></canvas>
+    </div>
+    <button id="play">▶️</button>
+    <div id="share" >
+        <div class="arrow"></div>
+        <div class="rocket"></div>
+        <p>
+            点击左上角<br>
+            分享到朋友圈
+        </p>
+    </div>
+    <div id="fireSound">
+        <audio  src="./static/fire_sound.mp3" loop></audio>
+        <audio src="./static/fire_sound.mp3" loop></audio>
+        <audio src="./static/fire_sound.mp3" loop></audio>
+    </div>
+    <script src="fires.js"></script>
+</body>
+</html>
