@@ -371,6 +371,7 @@ def hen_stock(stock, days = 30):
         return d
     return None
 
+
 if __name__ == "__main__":
     session = sessionmaker(sqlEngine)()  # 构建session对象
     
